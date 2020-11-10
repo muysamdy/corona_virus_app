@@ -78,12 +78,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _accessToken = '';
+  int _cases;
 
   void _incrementCounter() async {
     final apiService = APIService(API.sandbox());
     final accessToken = await apiService.getAccessToken();
+    final cases = await apiService.getEndpointData(
+        accessToken: accessToken, endpoint: Endpoint.cases);
 
-    setState(() => _accessToken = accessToken);
+    setState(() {
+      _accessToken = accessToken;
+      _cases = cases as int;
+    });
   }
 
   @override
@@ -100,9 +106,14 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_accessToken',
+              'accessToke: $_accessToken',
               style: Theme.of(context).textTheme.headline4,
             ),
+            if (_cases != null)
+              Text(
+                'cases : $_cases',
+                style: Theme.of(context).textTheme.headline4,
+              ),
           ],
         ),
       ),
