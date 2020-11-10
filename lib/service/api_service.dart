@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:coronavirus_rest_api/service/api.dart';
 import 'package:coronavirus_rest_api/service/endpoint_data.dart';
+import 'package:coronavirus_rest_api/service/api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,7 +55,7 @@ class APIService {
         final String responseJsonKey = _responsesJsonKeys[endpoint];
         final int value = endpointData[responseJsonKey];
         final String dateString = endpointData['date'];
-        final date = DateTime.parse(dateString);
+        final date = DateTime.tryParse(dateString);
 
         if (value != null) {
           return EndpointData(value: value, date: date);
