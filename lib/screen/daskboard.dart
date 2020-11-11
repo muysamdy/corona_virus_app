@@ -31,7 +31,9 @@ class _DashboardState extends State<Dashboard> {
             ? _endpointsData.values[Endpoint.cases].date
             : null);
     return Scaffold(
+
       appBar: AppBar(
+
         title: Text('Coronavirus Tracker'),
       ),
       body: RefreshIndicator(
