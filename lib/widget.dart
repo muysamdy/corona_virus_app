@@ -28,6 +28,13 @@ class EndpointCard extends StatelessWidget {
         EndpointCardData('Recovered', 'assets/patient.png', Color(0xFF70A901)),
   };
 
+  String get formattedValue {
+    if (value == null) {
+      return '';
+    }
+    return NumberFormat('#,###,###,###').format(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardData = _cardsData[endpoint];
@@ -54,7 +61,7 @@ class EndpointCard extends StatelessWidget {
                   children: <Widget>[
                     Image.asset(cardData.assetName, color: cardData.color),
                     Text(
-                      value?.toString() ?? "",
+                      formattedValue,
                       style: Theme.of(context).textTheme.headline4.copyWith(
                           color: cardData.color, fontWeight: FontWeight.w500),
                     ),
@@ -100,3 +107,21 @@ class LastUpdatedDateFormatter {
     return '';
   }
 }
+
+Future<void> showAlertDialog({
+  @required BuildContext context,
+  @required String title,
+  @required String content,
+  @required String defaultActionText,
+}) async =>
+    await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(content),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text(defaultActionText),
+                    onPressed: () => Navigator.of(context).pop())
+              ],
+            ));

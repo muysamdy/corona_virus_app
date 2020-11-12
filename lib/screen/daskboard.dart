@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:coronavirus_rest_api/repository/data_repository.dart';
 import 'package:coronavirus_rest_api/repository/endpoints_data.dart';
 import 'package:coronavirus_rest_api/service/api.dart';
@@ -15,25 +17,40 @@ class _DashboardState extends State<Dashboard> {
 
   void initState() {
     super.initState();
+    final dataRepository = Provider.of<DataRepository>(context, listen: false);
+    _endpointsData = dataRepository.getAllEndpointsCacheData();
     _updateData();
   }
 
   Future<void> _updateData() async {
-    final dataRepository = Provider.of<DataRepository>(context, listen: false);
-    final endpointData = await dataRepository.getAllEndpointsData();
-    setState(() => _endpointsData = endpointData);
+    try {
+      final dataRepository =
+          Provider.of<DataRepository>(context, listen: false);
+      final endpointData = await dataRepository.getAllEndpointsData();
+      setState(() => _endpointsData = endpointData);
+    } on SocketException catch (_) {
+      showAlertDialog(
+          context: context,
+          title: 'Connection Error',
+          content: 'Could not retrieve data. Please try again later.',
+          defaultActionText: 'OK');
+    } catch (_) {
+      showAlertDialog(
+          context: context,
+          title: 'Unknown Error',
+          content: 'Please contact support or try again later.',
+          defaultActionText: 'OK');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final formatter = LastUpdatedDateFormatter(
         lastUpdated: _endpointsData != null
-            ? _endpointsData.values[Endpoint.cases].date
+            ? _endpointsData.values[Endpoint.cases]?.date
             : null);
     return Scaffold(
-
       appBar: AppBar(
-
         title: Text('Coronavirus Tracker'),
       ),
       body: RefreshIndicator(
@@ -47,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
               EndpointCard(
                 endpoint: endpoint,
                 value: _endpointsData != null
-                    ? _endpointsData.values[endpoint].value
+                    ? _endpointsData.values[endpoint]?.value
                     : null,
               )
           ],
